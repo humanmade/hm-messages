@@ -46,3 +46,7 @@ hm_get_messages( $context, $clear_messages = true ); // get the messages as an a
 You must have a call to `wp_footer` in your theme's `footer.php`.
 
 Styling for messages is not provided, style `.message.error` and `.message.success` in your theme's CSS file.
+
+## Contribution guidelines ##
+
+see https://github.com/humanmade/hm-messages/blob/master/CONTRIBUTING.md
