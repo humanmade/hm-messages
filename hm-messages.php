@@ -49,7 +49,10 @@ function hm_add_message( $message, $context = null, $type = 'success' ) {
 	
 	$hm_messages[$context][] = array( 'message' => $message, 'type' => $type );
 
+	$data = json_encode( $hm_messages );
+	$hash = hash_hmac( 'md5', $data, wp_salt( 'nonce' ) );
 	setcookie( 'hm_messages', json_encode( $hm_messages ), 0, COOKIEPATH );
+	setcookie( 'hm_messages_hash', $hash, 0, COOKIEPATH );
 
 }
 
@@ -150,7 +153,15 @@ function hm_get_message_stack() {
 
 	if ( is_null( $hm_messages ) ) {
 		$cookie = ( !empty( $_COOKIE['hm_messages'] ) ) ? $_COOKIE['hm_messages'] : '';
-		$hm_messages = array_filter( (array) json_decode( stripslashes( $cookie ), true ) );
+		$cookie_hash = ( !empty( $_COOKIE['hm_messages_hash'] ) ) ? $_COOKIE['hm_messages_hash'] : '';
+
+		$cookie = wp_unslash( $cookie );
+		$cookie_hash = wp_unslash( $cookie_hash );
+
+		$hash = hash_hmac( 'md5', $cookie, wp_salt( 'nonce' ) );
+		if ( $hash === $cookie_hash ) {
+			$hm_messages = array_filter( (array) json_decode( $cookie, true ) );
+		}
 	}
 	
 	return (array)$hm_messages;
@@ -161,10 +172,13 @@ function hm_setcookie_js( $hm_messages ) {
 
 	global $hm_messages;
 	
-	$cookie = json_encode( $hm_messages ); ?>
+	$cookie = json_encode( $hm_messages );
+	$cookie_hash = hash_hmac( 'md5', $cookie, wp_salt( 'nonce' ) );
+?>
 	
 	<script type="text/javascript">
 		document.cookie = 'hm_messages=<?php echo $cookie; ?>; path=<?php echo COOKIEPATH; ?>';
+		document.cookie = 'hm_messages_hash=<?php echo $cookie_hash; ?>; path=<?php echo COOKIEPATH; ?>';
 	</script>
 	
 <?php }
