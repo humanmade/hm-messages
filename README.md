@@ -14,7 +14,7 @@ hm_error_message( 'Please enter a title' );
 To then display any messages, place the following whereever you want the messages to show:
 
 ```
-hm_the_messsages();
+hm_the_messages();
 ```
 
 Messaging also supports contexts so it is possible to show different messages in different places. For example, to display messages to do with login above a login form:
