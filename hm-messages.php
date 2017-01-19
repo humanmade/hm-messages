@@ -42,6 +42,9 @@ function hm_success_message ( $message, $context = '' ) {
  * @return null
  */
 function hm_add_message( $message, $context = null, $type = 'success' ) {
+	if ( headers_sent() ) {
+		return;
+	}
 
 	global $hm_messages;
 	
